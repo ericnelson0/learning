@@ -99,7 +99,7 @@ int *fail;
 double Q_table[STATES];
 Polesys prev_pole;
 
-void upd_prev(Polesys *p) {
+void upd_prev_pole(Polesys *p) {
 	prev_pole.dof = p->dof;
 	prev_pole.theta[0] = p->theta[0];
 	prev_pole.theta[1] = p->theta[1];
@@ -117,6 +117,15 @@ void upd_prev(Polesys *p) {
 	prev_pole.acc[1] = p->acc[1];
 	prev_pole.acc[2] = p->acc[2];
 	prev_pole.time = p->time;
+}
+
+double explore_func(double q_val, int times_explored) {
+	// NOTE: need to change the hard coded values. They are just place holders for now
+	if(times_explored < 50) {
+		return 4;
+	} else {
+		return q_val;
+	}
 }
 
 /*****************************************************************************/
@@ -150,8 +159,12 @@ double force[3];
 int *fail;
 int *explore;
 {
+  // Are the actions taken discrete in size as well? (e.g. 1 Newton discretization of force?
 
-  if( reset ) return;
+  if( reset ) {
+	// Do some reinitialization
+	return;
+  }
  
  // Example use of the state discretization decoder
  // Writes state into the state variable and sets the
@@ -208,7 +221,7 @@ int *explore;
   else
     force[2] = 0.0;
 
-  upd_prev(pole);
+  upd_prev_pole(pole);
 }
 
 
